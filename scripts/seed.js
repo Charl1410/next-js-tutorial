@@ -5,6 +5,7 @@ const {
   revenue,
   users,
 } = require('../app/lib/placeholder-data.js');
+//encrypts passwords to keep them safe 
 const bcrypt = require('bcrypt');
 
 async function seedUsers(client) {
