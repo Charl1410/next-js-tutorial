@@ -9,8 +9,11 @@ import {
   Revenue,
 } from './definitions';
 import { formatCurrency } from './utils';
+import { unstable_noStore as noStore } from 'next/cache';
+
 
 export async function fetchRevenue() {
+    noStore();
   // Add noStore() here to prevent the response from being cached.
   // This is equivalent to in fetch(..., {cache: 'no-store'}).
 
@@ -18,13 +21,13 @@ export async function fetchRevenue() {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log('Fetching revenue data...');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    //fetching all from the revenue table 
+    //fetching all from the revenue table in the db  
     const data = await sql<Revenue>`SELECT * FROM revenue`;
 
-    // console.log('Data fetch completed after 3 seconds.');
+    console.log('Data fetch completed after 3 seconds.');
 
     return data.rows;
   } catch (error) {
@@ -34,6 +37,8 @@ export async function fetchRevenue() {
 }
 
 export async function fetchLatestInvoices() {
+    noStore();
+
   try {
     const data = await sql<LatestInvoiceRaw>`
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
@@ -76,6 +81,8 @@ export async function fetchCardData() {
     const totalPaidInvoices = formatCurrency(data[2].rows[0].paid ?? '0');
     const totalPendingInvoices = formatCurrency(data[2].rows[0].pending ?? '0');
 
+    //check the data.ts file to see what the function returns 
+    //need to destructure this 
     return {
       numberOfCustomers,
       numberOfInvoices,
@@ -93,6 +100,8 @@ export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
 ) {
+    noStore();
+
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
@@ -125,6 +134,8 @@ export async function fetchFilteredInvoices(
 }
 
 export async function fetchInvoicesPages(query: string) {
+    noStore();
+
   try {
     const count = await sql`SELECT COUNT(*)
     FROM invoices
@@ -146,6 +157,8 @@ export async function fetchInvoicesPages(query: string) {
 }
 
 export async function fetchInvoiceById(id: string) {
+    noStore();
+
   try {
     const data = await sql<InvoiceForm>`
       SELECT
@@ -171,6 +184,8 @@ export async function fetchInvoiceById(id: string) {
 }
 
 export async function fetchCustomers() {
+    noStore();
+
   try {
     const data = await sql<CustomerField>`
       SELECT
@@ -189,6 +204,8 @@ export async function fetchCustomers() {
 }
 
 export async function fetchFilteredCustomers(query: string) {
+    noStore();
+
   try {
     const data = await sql<CustomersTableType>`
 		SELECT
